@@ -1,4 +1,4 @@
-import {ApplicationConfig, inject, provideZoneChangeDetection} from '@angular/core';
+import {ApplicationConfig, inject, provideAppInitializer, provideZoneChangeDetection} from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -10,11 +10,11 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(),
-    /*provideAppInitializer(() => {
+    provideAppInitializer(() => {
       const initFn = ((key: KeycloakService) => {
         return () => key.init();
       }) (inject(KeycloakService));
       return initFn();
-    })*/
+    })
   ]
 };
