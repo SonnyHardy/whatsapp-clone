@@ -6,12 +6,20 @@ import {KeycloakService} from "../../utils/keycloak/keycloak.service";
 import {MessageService} from "../../services/services/message.service";
 import {MessageResponse} from "../../services/models/message-response";
 import {DatePipe} from "@angular/common";
+import {PickerComponent} from "@ctrl/ngx-emoji-mart";
+import {FormsModule} from "@angular/forms";
+import {EmojiData} from "@ctrl/ngx-emoji-mart/ngx-emoji";
+import {MessageRequest} from "../../services/models/message-request";
+import * as Stomp from "stompjs";
+import SockJS from "sockjs-client";
 
 @Component({
   selector: 'app-main',
   imports: [
     ChatListComponent,
-    DatePipe
+    DatePipe,
+    PickerComponent,
+    FormsModule
   ],
   templateUrl: './main.component.html',
   standalone: true,
@@ -22,6 +30,10 @@ export class MainComponent implements OnInit{
   chats: Array<ChatResponse> = [];
   selectedChat: ChatResponse = {};
   chatMessages: MessageResponse[] = [];
+  showEmojis: boolean = false;
+  messageContent: string = '';
+  socketClient: any = null;
+  private notificationSubscription: any;
 
   constructor(
     private chatService: ChatService,
@@ -30,20 +42,8 @@ export class MainComponent implements OnInit{
   ) {}
 
   ngOnInit(): void {
+    this.initWebSocket();
     this.getAllChats();
-    /*this.messageService.saveMessage({
-      'body': {
-        'content': 'Hello back',
-        'chatId': 'd4222124-efd6-4b67-8bcc-78c94f110c34',
-        'receiverId': 'bb8f51b1-ec94-49c2-8c7e-1034a5c378c1',
-        'senderId': 'be42226f-f1ea-43ae-a2a0-c83dffa7931c',
-        'type': 'TEXT'
-      }
-    }).subscribe({
-      next:(response ) => {
-        console.log('message sent', response);
-      }
-    });*/
   }
 
   private getAllChats(){
@@ -67,7 +67,7 @@ export class MainComponent implements OnInit{
     this.selectedChat = chatResponse;
     this.getAllChatMessages(chatResponse.id as string);
     this.setMessagesToSeen();
-    //this.selectedChat.unreadCount = 0;
+    this.selectedChat.unreadCount = 0;
   }
 
   private getAllChatMessages(chatId: string) {
@@ -81,10 +81,95 @@ export class MainComponent implements OnInit{
   }
 
   private setMessagesToSeen() {
-
+    this.messageService.setMessagesToSeen({
+      'chat-id': this.selectedChat.id as string
+    }).subscribe({
+      next: () => {}
+    });
   }
 
   isSelfMessage(message: MessageResponse): boolean {
     return message.senderId === this.keycloakService.userId;
+  }
+
+  uploadMedia(target: EventTarget | null) {
+
+  }
+
+  onSelectEmojis(selectedEmoji: any) {
+    const emoji: EmojiData = selectedEmoji.emoji;
+    this.messageContent += emoji.native;
+  }
+
+  keyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      this.sendMessage();
+    }
+  }
+
+  onClick() {
+    this.setMessagesToSeen();
+  }
+
+  sendMessage() {
+    if (this.messageContent) {
+      const messageRequest: MessageRequest = {
+        chatId: this.selectedChat.id,
+        senderId: this.getSenderId(),
+        receiverId: this.getReceiverId(),
+        content: this.messageContent,
+        type: "TEXT"
+      };
+      this.messageService.saveMessage({
+        body: messageRequest
+      }).subscribe({
+        next: () => {
+          const messageResponse: MessageResponse = {
+            senderId: this.getSenderId(),
+            receiverId: this.getReceiverId(),
+            content: this.messageContent,
+            type: "TEXT",
+            state: "SENT",
+            createdAt: new Date().toString()
+          }
+          this.selectedChat.lastMessage = this.messageContent;
+          this.chatMessages.push(messageResponse);
+          this.messageContent = "";
+          this.showEmojis = false;
+        }
+      });
+    }
+  }
+
+  private getSenderId(): string {
+    if (this.selectedChat.senderId === this.keycloakService.userId) {
+      return this.selectedChat.senderId as string;
+    }
+    return this.selectedChat.receiverId as string;
+  }
+
+  private getReceiverId(): string {
+    if (this.selectedChat.senderId === this.keycloakService.userId) {
+      return this.selectedChat.receiverId as string;
+    }
+    return this.selectedChat.senderId as string;
+  }
+
+  private initWebSocket() {
+    if (this.keycloakService.keycloak.tokenParsed?.sub) {
+      let websocket = new SockJS('http://localhost:8088/websocket');
+      this.socketClient = Stomp.over(websocket);
+      const subUrl = `/user/${this.keycloakService.keycloak.tokenParsed?.sub}/chat`;
+      this.socketClient.connect({'Authorization': `Bearer ${this.keycloakService.keycloak.token}`},
+        () => {
+          this.notificationSubscription = this.socketClient.subscribe(subUrl,
+            (message: any)=> {
+              const notification: Notification = JSON.parse(message.body);
+            },
+            () => console.error("Error while connecting to webSocket")
+          );
+        }
+      );
+    }
   }
 }
