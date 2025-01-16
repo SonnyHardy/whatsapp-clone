@@ -16,7 +16,7 @@ public class NotificationService {
         log.info("Sending Websocket notification to {} with payload {}", userId, notification);
         messagingTemplate.convertAndSendToUser(
                 userId,
-                "/chat" + userId,
+                "/chat",
                 notification
         );
     }
