@@ -50,7 +50,8 @@
 }
 
 .bg-chat {
-  background-color: #efeae2;
+  //background-color: #efeae2;
+  background-color: #000;
   background-image: url("/wa_bg.png");
   background-size: contain;
 }
@@ -73,6 +74,38 @@
       font-size: 0.9rem;
     }
     justify-content: flex-end;
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: -10px;
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(135deg, #d9fdd3 0%, #d9fdd3 50%, transparent 50%, transparent);
+    }
+  }
+
+  &.friend {
+    justify-content: flex-start;
+    > div {
+      position: relative;
+      right: 0;
+      text-align: left;
+      background: #fff;
+      max-width: 65%;
+      padding: 10px 10px 0 10px;
+      border-radius: 5px;
+      font-size: 0.9rem;
+    }
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -10px;
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(225deg, #fff 0%, #fff 50%, transparent 50%, transparent);
+    }
   }
 }
 

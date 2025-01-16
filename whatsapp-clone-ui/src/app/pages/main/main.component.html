@@ -79,7 +79,20 @@
                     </small>
                   </div>
                 </div>
+
+              } @else {
+                <div class="message-box friend">
+                  <div class="d-flex flex-column align-items-end">
+                    @if (message.type === 'TEXT') {
+                      <span>{{ message.content }}</span>
+                    } @else if (message.media) {
+                      <img width="200" class="cursor-pointer" [src]="'data:image/jpg;base64,' + message.media" alt="">
+                    }
+                    <small class="text-black-50">{{ message.createdAt | date:'HH:mm' }}</small>
+                  </div>
+                </div>
               }
+
             }
           </div>
 
