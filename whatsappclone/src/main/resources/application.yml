@@ -29,6 +29,8 @@ springdoc:
   default-produces-media-type: application/json
 
 application:
+  cors:
+    origins: ${CORS_ORIGIN}
   file:
     uploads:
       media-output-path: ./uploads
