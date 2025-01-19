@@ -1,0 +1,24 @@
+services:
+  wac-api:  # Backend docker image
+    container_name: whatsapp-clone-api
+    image: sonnyhardy/wac-api:1.0
+    restart: always
+    ports:
+      - 8088:8088
+    networks:
+      - whatsapp-clone
+
+  wac-ui:        # Frontend docker image
+    container_name: whatsapp-clone-ui
+    image: sonnyhardy/wac-ui:1.0
+    restart: always
+    ports:
+      - 80:80
+    networks:
+      - whatsapp-clone
+    depends_on:
+      - wac-api
+
+networks:
+  whatsapp-clone:
+    driver: bridge
