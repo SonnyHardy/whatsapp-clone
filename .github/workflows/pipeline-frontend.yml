@@ -63,7 +63,7 @@ jobs:
           host: ${{ secrets.VPS_IP }}
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "docker/compose.yml"
+          source: "docker/compose.yml,${{ secrets.NGINX_CONF }}"
           target: whatsapp-clone
 
       - name: Deploy
@@ -73,6 +73,7 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd ci-cd
+            cd whatsapp-clone
             sudo docker-compose -f compose.yml pull -q
             sudo docker-compose -f compose.yml up -d wac-ui
+            sudo docker exec -it whatsapp-clone-ui nginx -s reload

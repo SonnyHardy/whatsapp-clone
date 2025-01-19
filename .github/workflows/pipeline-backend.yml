@@ -50,6 +50,13 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      - name: .env file extraction and export
+        run: |
+          echo "${{ secrets.DOTENV_FILE }}" > .env
+          set -a
+          source .env
+          set +a
+
       - name: Running unit tests
         run: |
           cd whatsappclone

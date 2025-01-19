@@ -13,7 +13,7 @@ RUN npm run build --configuration=production
 
 FROM nginx:latest
 
-COPY /whatsapp-clone-ui/nginx.conf /etc/nginx/nginx.conf
+#COPY /whatsapp-clone-ui/nginx.conf /etc/nginx/nginx.conf
 
 COPY --from=build-stage /app/dist/whatsapp-clone-ui/browser /usr/share/nginx/html
 
