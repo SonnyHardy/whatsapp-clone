@@ -1,0 +1,78 @@
+name: BSN Frontend Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - whatsapp-clone-ui/**
+      - docker/frontend/**
+      - docker/compose.yml
+      - .github/workflows/*-frontend.yml
+
+  workflow_dispatch:
+
+
+
+jobs:
+  build-image:
+    name: Build and Push Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract project version
+        id: extract_version
+        run: |
+          cd whatsapp-clone-ui
+          echo "VERSION=$(jq -r '.version' package.json)" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push to DockerHub
+        uses: docker/build-push-action@v6
+        with:
+          context: whatsapp-clone-ui
+          file: docker/frontend/Dockerfile
+          push: true
+          platforms: linux/amd64
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/wac-ui:${{ steps.extract_version.outputs.VERSION }},${{ secrets.DOCKERHUB_USERNAME }}/wac-ui:latest
+
+  deploy:
+    name: Deploy Frontend
+    runs-on: ubuntu-latest
+    needs: [build-image]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Copy compose.yml file
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "docker/compose.yml"
+          target: whatsapp-clone
+
+      - name: Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ci-cd
+            sudo docker-compose -f compose.yml pull -q
+            sudo docker-compose -f compose.yml up -d wac-ui
