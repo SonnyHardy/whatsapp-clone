@@ -1,4 +1,4 @@
-name: BSN Frontend Pipeline
+name: Whatsapp-clone Frontend Pipeline
 
 on:
   push:
