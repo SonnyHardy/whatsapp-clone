@@ -46,6 +46,8 @@ jobs:
           push: true
           platforms: linux/amd64
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/wac-ui:${{ steps.extract_version.outputs.VERSION }},${{ secrets.DOCKERHUB_USERNAME }}/wac-ui:latest
+          build-arg: |
+            NGINX_CONF=${{ secrets.NGINX_CONF }}
 
   deploy:
     name: Deploy Frontend
@@ -64,7 +66,7 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "docker/compose.yml,${{ secrets.NGINX_CONF }}"
-          target: whatsapp-clone
+          target: /home/debian/whatsapp-clone/
 
       - name: Deploy
         uses: appleboy/ssh-action@v1.0.3
@@ -73,7 +75,7 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd whatsapp-clone
+            cd /home/debian/whatsapp-clone/
             sudo docker-compose -f compose.yml pull -q
             sudo docker-compose -f compose.yml up -d wac-ui
             sudo docker exec -it whatsapp-clone-ui nginx -s reload

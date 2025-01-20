@@ -50,13 +50,6 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: .env file extraction and export
-        run: |
-          echo "${{ secrets.DOTENV_FILE }}" > .env
-          set -a
-          source .env
-          set +a
-
       - name: Running unit tests
         run: |
           cd whatsappclone
@@ -145,6 +138,6 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd whatsapp-clone
+            cd /home/debian/whatsapp-clone/
             sudo docker-compose -f compose.yml pull -q
             sudo docker-compose -f compose.yml up -d wac-api
