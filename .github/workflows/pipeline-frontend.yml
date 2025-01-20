@@ -3,7 +3,7 @@ name: Whatsapp-clone Frontend Pipeline
 on:
   push:
     branches:
-      - main
+      - mainn
     paths:
       - whatsapp-clone-ui/**
       - docker/frontend/**
