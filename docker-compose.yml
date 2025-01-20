@@ -7,8 +7,7 @@ services:
       POSTGRES_USER: username
       POSTGRES_PASSWORD: password
       PGDATA: /var/lib/postgresql/data
-      POSTGRES_DB: whatsapp_clone,whatsapp_clone_test
-
+      POSTGRES_DB: whatsapp_clone
     volumes:
       - postgres:/data/postgres
     ports:
