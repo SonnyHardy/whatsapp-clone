@@ -13,7 +13,7 @@ import {MessageRequest} from "../../services/models/message-request";
 import * as Stomp from "stompjs";
 import SockJS from "sockjs-client";
 import {Notification} from "./notification";
-import * as console from "node:console";
+//import * as console from "node:console";
 
 @Component({
   selector: 'app-main',
