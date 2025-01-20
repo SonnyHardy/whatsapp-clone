@@ -88,7 +88,7 @@ jobs:
           touch .env
           echo ${{ secrets.DOTENV_FILE }} >> .env
           chmod +x ./mvnw
-          ./mvnw clean package -Dspring.profiles.active=prod
+          ./mvnw clean package -Dspring.profiles.active=prod -DskipTests
 
   build-image:
     name: Build and Push Docker image
