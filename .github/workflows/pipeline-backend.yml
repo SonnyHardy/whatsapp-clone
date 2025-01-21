@@ -153,5 +153,5 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/debian/whatsapp-clone/
-            sudo docker-compose -f compose.yml pull -q
-            sudo docker-compose -f compose.yml up -d wac-api
+            sudo docker compose -f compose.yml pull -q
+            sudo docker compose -f compose.yml up -d wac-api
