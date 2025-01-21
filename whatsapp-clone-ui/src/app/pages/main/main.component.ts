@@ -10,7 +10,7 @@ import {PickerComponent} from "@ctrl/ngx-emoji-mart";
 import {FormsModule} from "@angular/forms";
 import {EmojiData} from "@ctrl/ngx-emoji-mart/ngx-emoji";
 import {MessageRequest} from "../../services/models/message-request";
-import Stomp from "@stomp/stompjs";
+import {Client} from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import {Notification} from "./notification";
 //import * as console from "node:console";
@@ -200,9 +200,24 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewChecked{
 
   private initWebSocket() {
     if (this.keycloakService.keycloak.tokenParsed?.sub) {
-      let websocket = new SockJS('http://localhost:8088/websocket');
-      this.socketClient = Stomp.over(websocket);
+      //let websocket = new SockJS('http://localhost:8088/websocket');
       const subUrl = `/user/${this.keycloakService.keycloak.tokenParsed?.sub}/chat`;
+
+      const client = new Client({
+        brokerURL: 'ws://localhost:8088/websocket',
+        connectHeaders: {'Authorization': 'Bearer ' + this.keycloakService.keycloak?.token},
+        onStompError: () => console.error("Error while connecting to webSocket")
+      });
+
+      this.notificationSubscription = client.subscribe(subUrl,
+        (message: any)=> {
+          const notification: Notification = JSON.parse(message.body);
+          this.handleNotification(notification);
+        },
+      );
+      client.activate();
+
+      /*this.socketClient = Stomp.over(websocket);
       this.socketClient.connect({'Authorization': 'Bearer ' + this.keycloakService.keycloak?.token},
         () => {
           this.notificationSubscription = this.socketClient.subscribe(subUrl,
@@ -213,7 +228,8 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewChecked{
             () => console.error("Error while connecting to webSocket")
           );
         }
-      );
+      );*/
+
     }
   }
 
