@@ -139,6 +139,11 @@ jobs:
           build-arg: |
             PROFILE=prod
             APP_VERSION=${{ steps.extract_version.outputs.VERSION }}
+            ISSUER_URI=${{ secrets.ISSUER_URI }}
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}
+            DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
+            CORS_ORIGIN=${{ secrets.CORS_ORIGIN }}
 
   deploy:
     name: Deploy Backend
