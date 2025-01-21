@@ -10,7 +10,7 @@ import {PickerComponent} from "@ctrl/ngx-emoji-mart";
 import {FormsModule} from "@angular/forms";
 import {EmojiData} from "@ctrl/ngx-emoji-mart/ngx-emoji";
 import {MessageRequest} from "../../services/models/message-request";
-import * as Stomp from "stompjs";
+import Stomp from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import {Notification} from "./notification";
 //import * as console from "node:console";
