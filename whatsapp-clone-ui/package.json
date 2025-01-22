@@ -5,6 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:stats": "ng build --configuration=production --stats-json",
+    "analyze": "webpack-bundle-analyzer dist/whatsapp-clone-ui/stats.json",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "api-gen": "ng-openapi-gen --input ./src/openapi/openapi.json --output ./src/app/services"
@@ -43,6 +45,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.5.2"
+    "typescript": "~5.5.2",
+    "webpack-bundle-analyzer": "^4.10.2"
   }
 }

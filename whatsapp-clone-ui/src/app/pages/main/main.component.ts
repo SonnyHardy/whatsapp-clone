@@ -10,7 +10,7 @@ import {PickerComponent} from "@ctrl/ngx-emoji-mart";
 import {FormsModule} from "@angular/forms";
 import {EmojiData} from "@ctrl/ngx-emoji-mart/ngx-emoji";
 import {MessageRequest} from "../../services/models/message-request";
-import {Client} from "@stomp/stompjs";
+import {Client, IMessage} from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import {Notification} from "./notification";
 //import * as console from "node:console";
@@ -200,35 +200,33 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewChecked{
 
   private initWebSocket() {
     if (this.keycloakService.keycloak.tokenParsed?.sub) {
-      //let websocket = new SockJS('http://localhost:8088/websocket');
-      const subUrl = `/user/${this.keycloakService.keycloak.tokenParsed?.sub}/chat`;
+      let websocket = new SockJS('http://localhost:8088/websocket');
 
-      const client = new Client({
-        brokerURL: 'ws://localhost:8088/websocket',
+      this.socketClient = new Client({
+        webSocketFactory: () => websocket,
         connectHeaders: {'Authorization': 'Bearer ' + this.keycloakService.keycloak?.token},
-        onStompError: () => console.error("Error while connecting to webSocket")
+        debug: (str) => console.log(str),
+        reconnectDelay: 5000,
+        heartbeatIncoming: 4000,
+        heartbeatOutgoing: 4000,
       });
 
-      this.notificationSubscription = client.subscribe(subUrl,
-        (message: any)=> {
-          const notification: Notification = JSON.parse(message.body);
-          this.handleNotification(notification);
-        },
-      );
-      client.activate();
+      const subUrl = `/user/${this.keycloakService.keycloak.tokenParsed?.sub}/chat`;
+      this.socketClient.onConnect = () => {
+        console.log("Connected successfully to WebSocket!");
+        this.notificationSubscription = this.socketClient.subscribe(subUrl,
+          (message: IMessage)=> {
+            console.log(message.body);
+            const notification: Notification = JSON.parse(message.body);
+            this.handleNotification(notification);
+          }
+        );
+      };
 
-      /*this.socketClient = Stomp.over(websocket);
-      this.socketClient.connect({'Authorization': 'Bearer ' + this.keycloakService.keycloak?.token},
-        () => {
-          this.notificationSubscription = this.socketClient.subscribe(subUrl,
-            (message: any)=> {
-              const notification: Notification = JSON.parse(message.body);
-              this.handleNotification(notification);
-            },
-            () => console.error("Error while connecting to webSocket")
-          );
-        }
-      );*/
+      this.socketClient.onStompError = (frame: any) => {
+        console.error('Error STOMP :', frame.headers['message']);
+      };
+      this.socketClient.activate();
 
     }
   }
