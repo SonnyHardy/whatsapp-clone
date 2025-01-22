@@ -15,6 +15,15 @@ services:
     networks:
       - whatsapp-clone
 
+  wac-api: # Backend docker image
+    container_name: wac-api
+    image: whatsapp-clone-api:1.0
+    restart: no
+    ports:
+      - 8088:8088
+    networks:
+      - whatsapp-clone
+
   adminer:
     container_name: adminer
     image: adminer:latest
