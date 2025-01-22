@@ -24,6 +24,18 @@ services:
     networks:
       - whatsapp-clone
 
+  nginx: # Backend docker image
+    container_name: nginx-wac
+    image: nginx:alpine
+    restart: no
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./local-proxy/nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - whatsapp-clone
+
   adminer:
     container_name: adminer
     image: adminer:latest
@@ -38,7 +50,7 @@ services:
     image: quay.io/keycloak/keycloak:26.0.0
     restart: no
     ports:
-      - 9090:8080
+      - 9090:9090
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin

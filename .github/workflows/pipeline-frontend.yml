@@ -45,7 +45,7 @@ jobs:
           file: docker/frontend/Dockerfile
           push: true
           platforms: linux/amd64
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/wac-ui:${{ steps.extract_version.outputs.VERSION }},${{ secrets.DOCKERHUB_USERNAME }}/wac-ui:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/wac-ui:latest
           build-arg: |
             NGINX_CONF=${{ secrets.NGINX_CONF }}
 
