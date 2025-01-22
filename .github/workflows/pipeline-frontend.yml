@@ -64,9 +64,10 @@ jobs:
         with:
           host: ${{ secrets.VPS_IP }}
           username: ${{ secrets.VPS_USERNAME }}
+          port: 22
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "docker/compose.yml,${{ secrets.NGINX_CONF }}"
-          target: /home/debian/whatsapp-clone/
+          target: /home/debian/whatsapp-clone/compose.yml
 
       - name: Deploy
         uses: appleboy/ssh-action@v1.0.3
