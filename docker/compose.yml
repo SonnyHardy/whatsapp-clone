@@ -10,7 +10,7 @@ services:
 
   wac-ui:        # Frontend docker image
     container_name: whatsapp-clone-ui
-    image: sonnyhardy/wac-ui:1.0
+    image: sonnyhardy/wac-ui:latest
     restart: always
     ports:
       - 80:80
