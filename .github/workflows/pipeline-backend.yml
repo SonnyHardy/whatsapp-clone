@@ -87,6 +87,7 @@ jobs:
           cd whatsappclone
           touch .env
           echo ${{ secrets.DOTENV_FILE }} >> .env
+          cat .env
           chmod +x ./mvnw
           ./mvnw clean package -Dspring.profiles.active=prod -DskipTests
 
@@ -111,6 +112,7 @@ jobs:
           cd whatsappclone
           touch .env
           echo ${{ secrets.DOTENV_FILE }} >> .env
+          cat .env
           chmod +x ./mvnw
           ./mvnw clean package -Dspring.profiles.active=prod -DskipTests
 
@@ -158,5 +160,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/debian/whatsapp-clone/
-            sudo docker compose -f compose.yml pull -q
-            sudo docker compose -f compose.yml up -d wac-api
+            sudo docker compose pull -q
+            sudo docker compose down wac-api
+            sudo docker compose up -d wac-api
