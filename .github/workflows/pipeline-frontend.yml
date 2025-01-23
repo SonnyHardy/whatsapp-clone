@@ -78,8 +78,6 @@ jobs:
           script: |
             cd /home/debian/whatsapp-clone/
             mv docker/compose.yml .
-            touch nginx.conf
-            echo ${{ secrets.NGINX_CONF }} >> nginx.conf
             rm -r docker
             sudo docker compose pull -q
             sudo docker compose down wac-ui
