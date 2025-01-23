@@ -81,5 +81,6 @@ jobs:
             touch nginx.conf
             echo ${{ secrets.NGINX_CONF }} >> nginx.conf
             rm -r docker
-            sudo docker compose -f compose.yml pull -q
-            sudo docker compose -f compose.yml up -d wac-ui
+            sudo docker compose pull -q
+            sudo docker compose down wac-ui
+            sudo docker compose up -d wac-ui

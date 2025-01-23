@@ -45,8 +45,11 @@ services:
     networks:
       - whatsapp-clone
     command:
-      - "start-dev"
-      - "--import-realm"
+      - start-dev
+      - --proxy-headers=xforwarded
+      - --hostname-strict=false
+      - --hostname-strict-https=false
+      - --import-realm
 
 networks:
   whatsapp-clone:
