@@ -85,9 +85,6 @@ jobs:
       - name: Build project
         run: |
           cd whatsappclone
-          touch .env
-          echo ${{ secrets.DOTENV_FILE }} >> .env
-          cat .env
           chmod +x ./mvnw
           ./mvnw clean package -Dspring.profiles.active=prod -DskipTests
 
@@ -112,7 +109,6 @@ jobs:
           cd whatsappclone
           touch .env
           echo ${{ secrets.DOTENV_FILE }} >> .env
-          cat .env
           chmod +x ./mvnw
           ./mvnw clean package -Dspring.profiles.active=prod -DskipTests
 
