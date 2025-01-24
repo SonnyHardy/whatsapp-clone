@@ -40,6 +40,9 @@ springdoc:
 application:
   cors:
     origins: ${CORS_ORIGIN}
+  keycloak:
+    authorizationUrl: ${AUTHORIZATION_URL}
+    tokenUrl: ${TOKEN_URL}
   file:
     uploads:
       media-output-path: ./uploads

@@ -13,6 +13,7 @@ import {MessageRequest} from "../../services/models/message-request";
 import {Client, IMessage} from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import {Notification} from "./notification";
+import {environment} from "../../../environments/environment.production";
 //import * as console from "node:console";
 
 @Component({
@@ -200,7 +201,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewChecked{
 
   private initWebSocket() {
     if (this.keycloakService.keycloak.tokenParsed?.sub) {
-      let websocket = new SockJS('http://localhost:8088/websocket');
+      let websocket = new SockJS(environment.websocketUrl);
 
       this.socketClient = new Client({
         webSocketFactory: () => websocket,

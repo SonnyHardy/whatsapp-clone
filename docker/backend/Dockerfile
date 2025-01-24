@@ -17,6 +17,8 @@ ARG DATABASE_URL
 ARG DATABASE_USERNAME
 ARG DATABASE_PASSWORD
 ARG CORS_ORIGIN
+ARG AUTHORIZATION_URL
+ARG TOKEN_URL
 
 WORKDIR /app
 COPY --from=build /build/target/whatsappclone-*.jar /app/
@@ -30,8 +32,10 @@ ENV ENV_DATABASE_URL=${DATABASE_URL}
 ENV ENV_DATABASE_USERNAME=${DATABASE_USERNAME}
 ENV ENV_DATABASE_PASSWORD=${DATABASE_PASSWORD}
 ENV ENV_CORS_ORIGIN=${CORS_ORIGIN}
+ENV ENV_AUTHORIZATION_URL=${AUTHORIZATION_URL}
+ENV ENV_TOKEN_URL=${TOKEN_URL}
 
 #CMD java -jar whatsappclone-${JAR_VERSION}.jar -Dspring.profiles.active=${ACTIVE_PROFILE}
 #CMD java -jar whatsappclone-${JAR_VERSION}.jar -Dspring.profiles.active=${ACTIVE_PROFILE} --ISSUER_URI=${ENV_ISSUER_URI} --DATABASE_URL=${ENV_DATABASE_URL} --DATABASE_USERNAME=${ENV_DATABASE_USERNAME} --DATABASE_PASSWORD=${ENV_DATABASE_PASSWORD} --CORS_ORIGIN=${ENV_CORS_ORIGIN}
-CMD ["java", "-jar", "whatsappclone-1.0.jar", "-Dspring.profiles.active=prod", "--ISSUER_URI=http://keycloak:8080/realms/whatsapp-clone", "--DATABASE_URL=jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:5432/postgres", "--DATABASE_USERNAME=postgres.gixbrkvvcijjrklvgxwq", "--DATABASE_PASSWORD=L3yzLHOIt4UkqYau", "--CORS_ORIGIN=http://localhost:4200,https://whatsapp-clone.sonnydevtest.de,https://www.whatsapp-clone.sonnydevtest.de"]
-#CMD ["java", "-jar", "whatsappclone-${JAR_VERSION}.jar", "-Dspring.profiles.active=${ACTIVE_PROFILE}", "--ISSUER_URI=${ENV_ISSUER_URI}", "--DATABASE_URL=${ENV_DATABASE_URL}", "--DATABASE_USERNAME=${ENV_DATABASE_USERNAME}", "--DATABASE_PASSWORD=${ENV_DATABASE_PASSWORD}", "--CORS_ORIGIN=${ENV_CORS_ORIGIN}"]
+CMD ["java", "-jar", "whatsappclone-1.0.jar", "-Dspring.profiles.active=prod", "--AUTHORIZATION_URL=https://whatsapp-clone-auth.sonnydevtest.de/realms/whatsapp-clone/protocol/openid-connect/auth", "--TOKEN_URL=https://whatsapp-clone-auth.sonnydevtest.de/realms/whatsapp-clone/protocol/openid-connect/token", "--ISSUER_URI=https://whatsapp-clone-auth.sonnydevtest.de/realms/whatsapp-clone", "--DATABASE_URL=jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:5432/postgres", "--DATABASE_USERNAME=postgres.gixbrkvvcijjrklvgxwq", "--DATABASE_PASSWORD=L3yzLHOIt4UkqYau", "--CORS_ORIGIN=https://whatsapp-clone.sonnydevtest.de,https://www.whatsapp-clone.sonnydevtest.de"]
+#CMD ["java", "-jar", "whatsappclone-${JAR_VERSION}.jar", "-Dspring.profiles.active=${ACTIVE_PROFILE}", "--AUTHORIZATION_URL=${ENV_AUTHORIZATION_URL}", "--TOKEN_URL=${ENV_TOKEN_URL}", "--ISSUER_URI=${ENV_ISSUER_URI}", "--DATABASE_URL=${ENV_DATABASE_URL}", "--DATABASE_USERNAME=${ENV_DATABASE_USERNAME}", "--DATABASE_PASSWORD=${ENV_DATABASE_PASSWORD}", "--CORS_ORIGIN=${ENV_CORS_ORIGIN}"]

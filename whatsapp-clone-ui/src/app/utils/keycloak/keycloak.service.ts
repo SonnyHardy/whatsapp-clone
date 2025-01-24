@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import Keycloak from "keycloak-js";
+import {environment} from "../../../environments/environment.production";
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class KeycloakService {
   get keycloak() {
     if (!this._keycloak) {
       this._keycloak = new Keycloak({
-        url: 'http://localhost:9090',
+        url: environment.keycloakUrl,
         realm: 'whatsapp-clone',
         clientId: 'whatsapp-clone-app',
       });
@@ -44,7 +45,7 @@ export class KeycloakService {
   }
 
   get logout() {
-    return this.keycloak.logout({redirectUri: 'http://localhost:4200'});
+    return this.keycloak.logout({redirectUri: environment.redirectUri});
   }
 
   accountManagement() {
