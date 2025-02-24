@@ -128,7 +128,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: whatsappclone
-          file: Dockerfile
+          file: whatsappclone/Dockerfile
           push: true
           platforms: linux/amd64
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/wac-api:${{ steps.extract_version.outputs.VERSION }},${{ secrets.DOCKERHUB_USERNAME }}/wac-api:latest
